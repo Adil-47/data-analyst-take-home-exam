@@ -1,5 +1,6 @@
 -- Question 1
-
+# Solving Q1 with SQL code:
+    
 -- Step 1: Remove duplicates and count total unique customers
 WITH unique_customers AS (
     SELECT DISTINCT customerID
@@ -19,7 +20,11 @@ SELECT
     ((SELECT COUNT(*) FROM customers_with_second_visit) * 100.0 / (SELECT COUNT(*) FROM unique_customers)) AS Percentage_Returned;
 
 
+
+
 -- Question 2
+
+# Solving Q2 with SQL code:
 
 -- Step 1: Create a CTE (Common Table Expression) named RankedStories
 
@@ -61,8 +66,34 @@ ORDER BY
 
 
 
--- Question 3
+# Solving Q2 with Python code:
 
+
+import pandas as pd
+
+# Load the data from the Excel file
+
+file_path = 'C:/Users/adil_/Desktop/Excel_file/Data Analyst Take Home Exam Data.xlsx'
+df = pd.read_excel(file_path, sheet_name='Data Analyst Take Home Exam Dat')
+
+# Grouping the data by 'section' and 'headline' to find the top three best-performing stories in each section by pageviews
+
+top_stories = df.groupby(['section', 'headline']).size().reset_index(name='pageviews')
+
+# Sorting the stories by section and then by pageviews in descending order
+top_stories_sorted = top_stories.sort_values(by=['section', 'pageviews'], ascending=[True, False])
+
+# Selecting the top three stories per section
+top_stories_per_section = top_stories_sorted.groupby('section').head(3)
+
+# Displaying the results
+print(top_stories_per_section)
+    
+
+
+-- Question 3
+# Solving Q3 with SQL code:
+    
 SELECT 
     section,
     COUNT(DISTINCT customerID) AS unique_visitors
@@ -78,7 +109,7 @@ SELECT
     section,
     SUM(totalVisits) AS total_visits
 FROM 
-    your_table_name
+    customer_activity
 WHERE 
     section IN ('WSJ_Tech', 'WSJ_Markets')
 GROUP BY 
@@ -89,8 +120,38 @@ SELECT
     section,
     SUM(totalVisits) / COUNT(DISTINCT customerID) AS avg_visits_per_visitor
 FROM 
-    your_table_name
+    customer_activity
 WHERE 
     section IN ('WSJ_Tech', 'WSJ_Markets')
 GROUP BY 
     section;
+
+
+
+# Solving Q3 with Python code:
+
+import pandas as pd
+
+# File path
+file_path = 'C:/Users/adil_/Desktop/Excel_file/Data Analyst Take Home Exam Data.xlsx'
+
+# Read the data from the Excel file
+df = pd.read_excel(file_path)
+
+# Filter the data to only include 'Tech' and 'Markets' sections
+tech_markets_df = df[df['section'].isin(['WSJ_Tech', 'WSJ_Markets'])]
+
+# Count the number of unique customer IDs for each section to find the number of unique visitors
+unique_visitors = tech_markets_df.groupby('section')['customerID'].nunique()
+
+# Calculate the total visits for each section
+total_visits = tech_markets_df.groupby('section')['totalVisits'].sum()
+
+# Calculate the average number of visits per unique visitor for each section
+avg_visits_per_visitor = total_visits / unique_visitors
+
+# Display the results
+print("Unique Visitors:\n", unique_visitors)
+print("\nTotal Visits:\n", total_visits)
+print("\nAverage Visits per Visitor:\n", avg_visits_per_visitor)
+
